@@ -1,0 +1,1390 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR Policy Intelligence | RAG Engineering Project</title>
+
+<style>
+:root {
+    --bg: #07111f;
+    --panel: #101f33;
+    --panel2: #142942;
+    --cyan: #38d9ee;
+    --violet: #9b8cff;
+    --green: #54e0b0;
+    --white: #f3f7fc;
+    --muted: #9aafc5;
+    --border: rgba(125,180,220,.19);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--white);
+    line-height: 1.7;
+    overflow-x: hidden;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(ellipse at 15% 10%, #14385b 0%, transparent 35%),
+      radial-gradient(ellipse at 90% 40%, #261b50 0%, transparent 32%),
+      linear-gradient(140deg,#07111f,#0a1729);
+}
+
+a { color: inherit; text-decoration: none; }
+
+.container {
+    width: min(1160px, 91%);
+    margin: auto;
+}
+
+section { padding: 95px 0; }
+
+.section-label {
+    color: var(--cyan);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    font-size: 12px;
+    font-weight: 800;
+    margin-bottom: 12px;
+}
+
+.section-title {
+    font-size: clamp(28px,4vw,43px);
+    line-height: 1.2;
+    margin-bottom: 18px;
+    letter-spacing: -1px;
+}
+
+.section-intro {
+    max-width: 720px;
+    color: var(--muted);
+    font-size: 16px;
+    margin-bottom: 38px;
+}
+
+.gradient-text {
+    background: linear-gradient(90deg,var(--cyan),var(--violet));
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+/* NAVIGATION */
+
+nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(7,17,31,.88);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid var(--border);
+}
+
+.nav-inner {
+    min-height: 72px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.logo {
+    font-size: 17px;
+    font-weight: 850;
+    letter-spacing: .5px;
+}
+
+.logo span { color: var(--cyan); }
+
+.nav-links {
+    display: flex;
+    gap: 24px;
+    font-size: 13px;
+    color: var(--muted);
+}
+
+.nav-links a:hover { color: var(--cyan); }
+
+.menu-btn {
+    display: none;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* HERO */
+
+.hero {
+    min-height: 690px;
+    display: flex;
+    align-items: center;
+    padding: 90px 0;
+}
+
+.hero-grid {
+    display: grid;
+    grid-template-columns: 1.15fr .85fr;
+    gap: 55px;
+    align-items: center;
+}
+
+.eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    border: 1px solid rgba(56,217,238,.3);
+    color: var(--cyan);
+    background: rgba(56,217,238,.07);
+    padding: 8px 14px;
+    border-radius: 40px;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 25px;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    background: var(--green);
+    border-radius: 50%;
+    box-shadow: 0 0 13px var(--green);
+}
+
+.hero h1 {
+    font-size: clamp(39px,5.4vw,66px);
+    line-height: 1.08;
+    letter-spacing: -2px;
+    margin-bottom: 23px;
+}
+
+.hero-description {
+    color: var(--muted);
+    font-size: 17px;
+    max-width: 620px;
+    margin-bottom: 30px;
+}
+
+.hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 13px;
+}
+
+.btn {
+    padding: 13px 21px;
+    border-radius: 9px;
+    font-size: 14px;
+    font-weight: 750;
+    cursor: pointer;
+    display: inline-block;
+    transition: .25s;
+}
+
+.btn-primary {
+    color: #04121e;
+    background: linear-gradient(90deg,var(--cyan),#8bafff);
+    border: none;
+}
+
+.btn-secondary {
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,.03);
+    color: white;
+}
+
+.btn:hover { transform: translateY(-3px); }
+
+/* HERO VISUAL */
+
+.visual-panel {
+    position: relative;
+    padding: 28px;
+    background: linear-gradient(145deg,#132b45,#111c35);
+    border: 1px solid #31506e;
+    border-radius: 22px;
+    box-shadow: 0 25px 80px rgba(0,0,0,.3);
+}
+
+.visual-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.visual-top small {
+    color: var(--muted);
+    font-size: 11px;
+    letter-spacing: 2px;
+}
+
+.live {
+    color: var(--green);
+    font-size: 11px;
+}
+
+.orbit {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 220px;
+    position: relative;
+}
+
+.orbit-ring {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    border: 1px dashed rgba(56,217,238,.38);
+    border-radius: 50%;
+    animation: rotate 22s linear infinite;
+}
+
+.orbit-ring::before {
+    content: "";
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    top: 22px;
+    left: 25px;
+    background: var(--cyan);
+    border-radius: 50%;
+    box-shadow: 0 0 20px var(--cyan);
+}
+
+.orbit-core {
+    width: 115px;
+    height: 115px;
+    border-radius: 50%;
+    background: radial-gradient(circle,#1b6179,#162b50 70%);
+    border: 1px solid var(--cyan);
+    box-shadow: 0 0 40px rgba(56,217,238,.25);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.orbit-core strong { font-size: 28px; }
+.orbit-core span { font-size: 10px; color: var(--cyan); }
+
+@keyframes rotate {
+    to { transform: rotate(360deg); }
+}
+
+.mini-stats {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.mini-stat {
+    background: rgba(255,255,255,.035);
+    padding: 13px 8px;
+    border-radius: 9px;
+    text-align: center;
+}
+
+.mini-stat strong {
+    display: block;
+    font-size: 21px;
+    color: var(--cyan);
+}
+
+.mini-stat span {
+    font-size: 10px;
+    color: var(--muted);
+}
+
+/* PROJECT STATS */
+
+.stats-strip {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    background: rgba(15,34,54,.65);
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+}
+
+.stat {
+    padding: 27px 15px;
+    text-align: center;
+    border-right: 1px solid var(--border);
+}
+
+.stat:last-child { border: none; }
+
+.stat strong {
+    display: block;
+    font-size: 25px;
+    color: var(--cyan);
+}
+
+.stat span {
+    font-size: 12px;
+    color: var(--muted);
+}
+
+/* PROBLEM */
+
+.problem-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.info-card {
+    padding: 27px;
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    background: linear-gradient(145deg,rgba(21,44,68,.85),rgba(12,27,45,.85));
+}
+
+.info-card h3 { margin-bottom: 12px; font-size: 19px; }
+
+.info-card p { color: var(--muted); font-size: 14px; }
+
+.problem-list {
+    list-style: none;
+    margin-top: 15px;
+}
+
+.problem-list li {
+    padding: 9px 0;
+    border-bottom: 1px solid var(--border);
+    color: #d4e1ed;
+    font-size: 14px;
+}
+
+.problem-list li::before {
+    content: "→";
+    color: var(--cyan);
+    margin-right: 10px;
+}
+
+/* ARCHITECTURE */
+
+.architecture {
+    background: rgba(13,29,48,.6);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+}
+
+.arch-flow {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 15px;
+    position: relative;
+}
+
+.arch-card {
+    background: linear-gradient(145deg,#142b45,#101d32);
+    border: 1px solid #31516e;
+    border-radius: 13px;
+    padding: 22px;
+    position: relative;
+    transition: .3s;
+}
+
+.arch-card:hover {
+    border-color: var(--cyan);
+    transform: translateY(-5px);
+}
+
+.arch-number {
+    font-size: 12px;
+    color: var(--cyan);
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.arch-icon {
+    font-size: 30px;
+    margin: 12px 0;
+}
+
+.arch-card h3 { font-size: 16px; margin-bottom: 8px; }
+
+.arch-card p { font-size: 13px; color: var(--muted); }
+
+.arch-card .tag {
+    display: inline-block;
+    margin-top: 15px;
+    font-size: 10px;
+    color: var(--cyan);
+    border: 1px solid rgba(56,217,238,.3);
+    padding: 4px 9px;
+    border-radius: 20px;
+}
+
+/* PIPELINE INTERACTIVE */
+
+.pipeline-layout {
+    display: grid;
+    grid-template-columns: .8fr 1.2fr;
+    gap: 30px;
+}
+
+.pipeline-list {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.pipeline-btn {
+    width: 100%;
+    text-align: left;
+    background: var(--panel);
+    color: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 15px;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.pipeline-btn:hover,
+.pipeline-btn.active {
+    border-color: var(--cyan);
+    background: #17334c;
+}
+
+.pipeline-btn strong {
+    display: block;
+    font-size: 14px;
+}
+
+.pipeline-btn span {
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.pipeline-detail {
+    min-height: 350px;
+    padding: 35px;
+    border: 1px solid #31516e;
+    border-radius: 16px;
+    background: linear-gradient(140deg,#142c48,#111d35);
+}
+
+.pipeline-detail .big-icon { font-size: 43px; margin-bottom: 18px; }
+
+.pipeline-detail h3 {
+    color: var(--cyan);
+    font-size: 24px;
+    margin-bottom: 15px;
+}
+
+.pipeline-detail p { color: var(--muted); margin-bottom: 18px; }
+
+.code-example {
+    background: #071321;
+    padding: 16px;
+    border-radius: 9px;
+    color: #9ce9dc;
+    font-family: Consolas,monospace;
+    font-size: 12px;
+    overflow-wrap: anywhere;
+}
+
+/* TECHNOLOGY */
+
+.tech-grid {
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    gap: 14px;
+}
+
+.tech-card {
+    padding: 22px;
+    border: 1px solid var(--border);
+    background: rgba(17,35,56,.85);
+    border-radius: 12px;
+    transition: .25s;
+}
+
+.tech-card:hover {
+    border-color: var(--violet);
+    transform: translateY(-4px);
+}
+
+.tech-card .symbol {
+    font-size: 26px;
+    margin-bottom: 13px;
+}
+
+.tech-card h3 { font-size: 15px; margin-bottom: 6px; }
+
+.tech-card p { color: var(--muted); font-size: 12px; }
+
+.tech-card a {
+    display: inline-block;
+    margin-top: 13px;
+    color: var(--cyan);
+    font-size: 11px;
+}
+
+/* DEMO */
+
+.demo-section {
+    background: linear-gradient(135deg,#102844,#171d3d);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+}
+
+.demo-box {
+    max-width: 850px;
+    margin: auto;
+    background: #0b192b;
+    border: 1px solid #365576;
+    border-radius: 18px;
+    padding: 28px;
+}
+
+.chat-question {
+    padding: 15px;
+    background: #192e47;
+    border-radius: 10px;
+    margin: 16px 0;
+    color: #e7f1fa;
+}
+
+.chat-answer {
+    padding: 20px;
+    border-left: 3px solid var(--green);
+    background: #102b32;
+    border-radius: 9px;
+    color: #d7f5e9;
+    margin: 14px 0;
+}
+
+.chat-source {
+    font-size: 12px;
+    color: var(--cyan);
+    margin-top: 12px;
+}
+
+.demo-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 20px 0;
+}
+
+.demo-tab {
+    background: #172b42;
+    color: white;
+    border: 1px solid var(--border);
+    padding: 9px 13px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.demo-tab.active {
+    border-color: var(--cyan);
+    color: var(--cyan);
+}
+
+/* FOLDER STRUCTURE */
+
+.folder {
+    background: #0c1a2c;
+    border: 1px solid var(--border);
+    padding: 25px;
+    border-radius: 13px;
+    overflow-x: auto;
+}
+
+.folder pre {
+    color: #b8d5e8;
+    font-family: Consolas,monospace;
+    font-size: 13px;
+    line-height: 1.9;
+}
+
+/* ROADMAP */
+
+.roadmap {
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    gap: 13px;
+}
+
+.roadmap-card {
+    padding: 23px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+
+.roadmap-card .phase {
+    color: var(--cyan);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.roadmap-card h3 { font-size: 17px; margin: 12px 0; }
+
+.roadmap-card p { color: var(--muted); font-size: 13px; }
+
+/* OUTCOME */
+
+.outcome {
+    text-align: center;
+    padding: 65px 30px;
+    border: 1px solid #31516e;
+    border-radius: 20px;
+    background: linear-gradient(120deg,#12334a,#20204b);
+}
+
+.outcome h2 {
+    font-size: clamp(27px,4vw,42px);
+    margin-bottom: 16px;
+}
+
+.outcome p {
+    max-width: 730px;
+    margin: auto;
+    color: #b8cce0;
+}
+
+/* FOOTER */
+
+footer {
+    padding: 35px 0;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+footer strong { color: var(--cyan); }
+
+@media(max-width:850px) {
+    .hero-grid, .pipeline-layout { grid-template-columns: 1fr; }
+    .tech-grid { grid-template-columns: repeat(2,1fr); }
+    .roadmap { grid-template-columns: repeat(2,1fr); }
+    .arch-flow { grid-template-columns: repeat(2,1fr); }
+    .hero { min-height: auto; }
+}
+
+@media(max-width:600px) {
+    section { padding: 65px 0; }
+    .nav-links {
+        display: none;
+        position: absolute;
+        top: 72px;
+        left: 0;
+        width: 100%;
+        padding: 20px;
+        background: #0b192b;
+        flex-direction: column;
+    }
+    .nav-links.show { display: flex; }
+    .menu-btn { display: block; }
+    .stats-grid { grid-template-columns: repeat(2,1fr); }
+    .stat:nth-child(2) { border-right: none; }
+    .problem-grid, .arch-flow { grid-template-columns: 1fr; }
+    .tech-grid { grid-template-columns: repeat(2,1fr); }
+    .roadmap { grid-template-columns: 1fr; }
+    .hero h1 { letter-spacing: -1px; }
+    .visual-panel { padding: 19px; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAVIGATION -->
+
+<nav>
+<div class="container nav-inner">
+    <a href="#home" class="logo">HR<span>INTELLIGENCE</span></a>
+
+    <div class="nav-links" id="navLinks">
+        <a href="#overview">Overview</a>
+        <a href="#architecture">Architecture</a>
+        <a href="#pipeline">RAG Pipeline</a>
+        <a href="#technology">Technology</a>
+        <a href="#demo">Demo</a>
+        <a href="#roadmap">Roadmap</a>
+    </div>
+
+    <button class="menu-btn" onclick="toggleMenu()">☰</button>
+</div>
+</nav>
+
+<!-- HERO -->
+
+<header class="hero" id="home">
+<div class="container hero-grid">
+
+    <div>
+        <div class="eyebrow">
+            <span class="dot"></span>
+            AI ENGINEERING PROJECT · WORKING MVP
+        </div>
+
+        <h1>
+            Transform HR Policies Into
+            <span class="gradient-text">Intelligent Conversations.</span>
+        </h1>
+
+        <p class="hero-description">
+            A practical Retrieval-Augmented Generation application
+            that enables employees to ask questions in natural language
+            and receive answers grounded in organisational policy documents.
+        </p>
+
+        <div class="hero-actions">
+            <a class="btn btn-primary" href="#architecture">
+                Explore Architecture →
+            </a>
+            <a class="btn btn-secondary" href="#pipeline">
+                Understand RAG Pipeline
+            </a>
+        </div>
+    </div>
+
+    <div class="visual-panel">
+        <div class="visual-top">
+            <strong>AI KNOWLEDGE ENGINE</strong>
+            <span class="live">● SYSTEM OVERVIEW</span>
+        </div>
+
+        <div class="orbit">
+            <div class="orbit-ring"></div>
+            <div class="orbit-core">
+                <strong>RAG</strong>
+                <span>INTELLIGENCE</span>
+            </div>
+        </div>
+
+        <div class="mini-stats">
+            <div class="mini-stat">
+                <strong>06</strong>
+                <span>RAG STAGES</span>
+            </div>
+            <div class="mini-stat">
+                <strong>384</strong>
+                <span>VECTOR DIMENSIONS</span>
+            </div>
+            <div class="mini-stat">
+                <strong>01</strong>
+                <span>LLM ENGINE</span>
+            </div>
+        </div>
+    </div>
+
+</div>
+</header>
+
+<!-- PROJECT STATS -->
+
+<div class="stats-strip">
+<div class="container stats-grid">
+    <div class="stat">
+        <strong>Python</strong>
+        <span>Core development</span>
+    </div>
+    <div class="stat">
+        <strong>ChromaDB</strong>
+        <span>Vector storage</span>
+    </div>
+    <div class="stat">
+        <strong>Groq</strong>
+        <span>LLM inference</span>
+    </div>
+    <div class="stat">
+        <strong>Streamlit</strong>
+        <span>Application interface</span>
+    </div>
+</div>
+</div>
+
+<!-- OVERVIEW -->
+
+<section id="overview">
+<div class="container">
+
+    <div class="section-label">01 / BUSINESS CONTEXT</div>
+    <h2 class="section-title">
+        Why do we need an <span class="gradient-text">HR AI Assistant?</span>
+    </h2>
+
+    <p class="section-intro">
+        Organisations maintain HR policies in documents.
+        Employees need quick and reliable answers, but finding
+        the right information manually can be time-consuming.
+    </p>
+
+    <div class="problem-grid">
+
+        <div class="info-card">
+            <h3>❌ Traditional Approach</h3>
+            <p>Employees depend on manual document searches and HR clarification.</p>
+            <ul class="problem-list">
+                <li>Search lengthy policy documents</li>
+                <li>Find the correct policy section</li>
+                <li>Contact HR for routine questions</li>
+                <li>Spend time interpreting policy language</li>
+            </ul>
+        </div>
+
+        <div class="info-card">
+            <h3>✓ Proposed AI Approach</h3>
+            <p>Use a conversational knowledge assistant powered by RAG.</p>
+            <ul class="problem-list">
+                <li>Ask questions using natural language</li>
+                <li>Retrieve relevant policy information</li>
+                <li>Generate contextual answers</li>
+                <li>Display supporting source documents</li>
+            </ul>
+        </div>
+
+    </div>
+
+</div>
+</section>
+
+<!-- ARCHITECTURE -->
+
+<section class="architecture" id="architecture">
+<div class="container">
+
+    <div class="section-label">02 / SOLUTION ARCHITECTURE</div>
+    <h2 class="section-title">
+        Inside the <span class="gradient-text">RAG Architecture</span>
+    </h2>
+
+    <p class="section-intro">
+        Six connected stages transform static documents into
+        a searchable organisational knowledge system.
+    </p>
+
+    <div class="arch-flow">
+
+        <div class="arch-card">
+            <div class="arch-number">STAGE 01</div>
+            <div class="arch-icon">📄</div>
+            <h3>Document Ingestion</h3>
+            <p>Read source documents and extract their text content.</p>
+            <span class="tag">PYTHON · PATHLIB</span>
+        </div>
+
+        <div class="arch-card">
+            <div class="arch-number">STAGE 02</div>
+            <div class="arch-icon">🧩</div>
+            <h3>Text Chunking</h3>
+            <p>Divide long documents into smaller searchable segments.</p>
+            <span class="tag">TEXT PROCESSING</span>
+        </div>
+
+        <div class="arch-card">
+            <div class="arch-number">STAGE 03</div>
+            <div class="arch-icon">🧠</div>
+            <h3>Embedding Generation</h3>
+            <p>Convert text into numerical vectors that represent semantic meaning.</p>
+            <span class="tag">SENTENCE TRANSFORMERS</span>
+        </div>
+
+        <div class="arch-card">
+            <div class="arch-number">STAGE 04</div>
+            <div class="arch-icon">🗄️</div>
+            <h3>Vector Database</h3>
+            <p>Store embeddings, original text and document metadata.</p>
+            <span class="tag">CHROMADB</span>
+        </div>
+
+        <div class="arch-card">
+            <div class="arch-number">STAGE 05</div>
+            <div class="arch-icon">🔎</div>
+            <h3>Semantic Retrieval</h3>
+            <p>Find policy chunks relevant to the employee's question.</p>
+            <span class="tag">VECTOR SEARCH</span>
+        </div>
+
+        <div class="arch-card">
+            <div class="arch-number">STAGE 06</div>
+            <div class="arch-icon">✨</div>
+            <h3>LLM Generation</h3>
+            <p>Generate a natural-language answer using retrieved policy context.</p>
+            <span class="tag">GROQ · GPT-OSS-20B</span>
+        </div>
+
+    </div>
+
+</div>
+</section>
+
+<!-- INTERACTIVE PIPELINE -->
+
+<section id="pipeline">
+<div class="container">
+
+    <div class="section-label">03 / HOW THE SYSTEM WORKS</div>
+    <h2 class="section-title">
+        Explore the <span class="gradient-text">RAG Pipeline</span>
+    </h2>
+
+    <p class="section-intro">
+        Select each stage to understand what happens behind the scenes.
+        This is the technical journey of one HR question.
+    </p>
+
+    <div class="pipeline-layout">
+
+        <div class="pipeline-list" id="pipelineList"></div>
+
+        <div class="pipeline-detail" id="pipelineDetail">
+            <div class="big-icon">📄</div>
+            <h3>Document Ingestion</h3>
+            <p>
+                The application reads HR policy documents from
+                the documents folder and extracts their content.
+            </p>
+            <div class="code-example">
+                documents/leave_policy.txt<br>
+                documents/work_policy.txt
+            </div>
+        </div>
+
+    </div>
+</div>
+</section>
+
+<!-- TECHNOLOGY -->
+
+<section id="technology" class="architecture">
+<div class="container">
+
+    <div class="section-label">04 / TECHNOLOGY STACK</div>
+    <h2 class="section-title">
+        Built With <span class="gradient-text">Practical AI Technologies</span>
+    </h2>
+
+    <p class="section-intro">
+        The project uses direct Python libraries and APIs.
+        It does not depend on LangChain or LangGraph.
+    </p>
+
+    <div class="tech-grid">
+
+        <div class="tech-card">
+            <div class="symbol">🐍</div>
+            <h3>Python</h3>
+            <p>Main programming language for document processing and orchestration.</p>
+            <a href="https://docs.python.org/3/" target="_blank">Official resources ↗</a>
+        </div>
+
+        <div class="tech-card">
+            <div class="symbol">🖥️</div>
+            <h3>Streamlit</h3>
+            <p>Creates the interactive chatbot and visual control room.</p>
+            <a href="https://docs.streamlit.io/" target="_blank">Official resources ↗</a>
+        </div>
+
+        <div class="tech-card">
+            <div class="symbol">🧠</div>
+            <h3>Sentence Transformers</h3>
+            <p>Generates semantic embeddings using all-MiniLM-L6-v2.</p>
+            <a href="https://www.sbert.net/" target="_blank">Official resources ↗</a>
+        </div>
+
+        <div class="tech-card">
+            <div class="symbol">🗄️</div>
+            <h3>ChromaDB</h3>
+            <p>Stores and retrieves vector representations and metadata.</p>
+            <a href="https://docs.trychroma.com/" target="_blank">Official resources ↗</a>
+        </div>
+
+        <div class="tech-card">
+            <div class="symbol">⚡</div>
+            <h3>Groq API</h3>
+            <p>Provides access to hosted LLM inference.</p>
+            <a href="https://console.groq.com/docs" target="_blank">Official resources ↗</a>
+        </div>
+
+        <div class="tech-card">
+            <div class="symbol">🤖</div>
+            <h3>GPT-OSS-20B</h3>
+            <p>Generates conversational answers grounded in retrieved context.</p>
+            <a href="https://console.groq.com/docs/models" target="_blank">Model resources ↗</a>
+        </div>
+
+        <div class="tech-card">
+            <div class="symbol">🔐</div>
+            <h3>Python Dotenv</h3>
+            <p>Loads configuration and API credentials from the environment.</p>
+            <a href="https://pypi.org/project/python-dotenv/" target="_blank">Documentation ↗</a>
+        </div>
+
+        <div class="tech-card">
+            <div class="symbol">🛠️</div>
+            <h3>VS Code</h3>
+            <p>Development environment used to build and test the project.</p>
+            <a href="https://code.visualstudio.com/docs" target="_blank">Official resources ↗</a>
+        </div>
+
+    </div>
+</div>
+</section>
+
+<!-- DEMONSTRATION -->
+
+<section class="demo-section" id="demo">
+<div class="container">
+
+    <div class="section-label">05 / APPLICATION DEMONSTRATION</div>
+    <h2 class="section-title">
+        From Employee Question to <span class="gradient-text">Grounded Answer</span>
+    </h2>
+
+    <p class="section-intro">
+        Explore sample scenarios based on the fictional ABC Technologies
+        HR policy documents. These are illustrative examples of the
+        intended application behaviour, not live chatbot responses.
+    </p>
+
+    <div class="demo-box">
+
+        <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap">
+            <strong>ABC TECHNOLOGIES · HR ASSISTANT</strong>
+            <span style="color:var(--green);font-size:12px">● SAMPLE SCENARIOS</span>
+        </div>
+
+        <div class="demo-tabs">
+            <button class="demo-tab active" onclick="showDemo(0,this)">Annual Leave</button>
+            <button class="demo-tab" onclick="showDemo(1,this)">Work From Home</button>
+            <button class="demo-tab" onclick="showDemo(2,this)">Sick Leave</button>
+            <button class="demo-tab" onclick="showDemo(3,this)">Missing Policy</button>
+        </div>
+
+        <div id="demoContent"></div>
+
+    </div>
+
+</div>
+</section>
+
+<!-- FILE STRUCTURE -->
+
+<section id="project">
+<div class="container">
+
+    <div class="section-label">06 / IMPLEMENTATION</div>
+    <h2 class="section-title">
+        Project <span class="gradient-text">Structure</span>
+    </h2>
+
+    <p class="section-intro">
+        A modular project structure separates independent learning stages,
+        the integrated chatbot and the visual control room.
+    </p>
+
+    <div class="folder">
+<pre>
+HR_Policy_RAG/
+│
+├── documents/
+│   ├── leave_policy.txt
+│   └── work_policy.txt
+│
+├── stages/
+│   ├── 01_document_loading.py
+│   ├── 02_chunking.py
+│   ├── 03_embeddings.py
+│   ├── 04_vector_database.py
+│   ├── 05_retrieval.py
+│   └── 06_generation.py
+│
+├── hr_vector_db/
+│
+├── app.py
+├── rag_app.py
+├── rag_control_room.py
+├── view_database.py
+│
+├── requirements.txt
+└── .env
+</pre>
+    </div>
+
+</div>
+</section>
+
+<!-- ROADMAP -->
+
+<section class="architecture" id="roadmap">
+<div class="container">
+
+    <div class="section-label">07 / PRODUCT ROADMAP</div>
+    <h2 class="section-title">
+        From <span class="gradient-text">MVP to Enterprise AI</span>
+    </h2>
+
+    <p class="section-intro">
+        The current application establishes the RAG foundation.
+        The following phases can improve quality, governance and capabilities.
+    </p>
+
+    <div class="roadmap">
+
+        <div class="roadmap-card">
+            <div class="phase">PHASE 01 · CURRENT</div>
+            <h3>Working RAG MVP</h3>
+            <p>
+                TXT ingestion, chunking, embeddings, ChromaDB,
+                semantic retrieval, Groq generation and Streamlit.
+            </p>
+        </div>
+
+        <div class="roadmap-card">
+            <div class="phase">PHASE 02 · ENHANCE</div>
+            <h3>Advanced RAG</h3>
+            <p>
+                PDF and DOCX ingestion, improved chunking,
+                metadata filtering and RAG evaluation.
+            </p>
+        </div>
+
+        <div class="roadmap-card">
+            <div class="phase">PHASE 03 · ENTERPRISE</div>
+            <h3>Enterprise HR Assistant</h3>
+            <p>
+                Authentication, role-based access, policy versioning,
+                audit logs and HR escalation.
+            </p>
+        </div>
+
+        <div class="roadmap-card">
+            <div class="phase">PHASE 04 · AGENTIC AI</div>
+            <h3>HR AI Agent</h3>
+            <p>
+                Approved workflow initiation, employee request handling
+                and human-in-the-loop decisions.
+            </p>
+        </div>
+
+    </div>
+</div>
+</section>
+
+<!-- OUTCOME -->
+
+<section>
+<div class="container">
+    <div class="outcome">
+
+        <div class="section-label">THE LEARNING OUTCOME</div>
+
+        <h2>
+            From Understanding RAG<br>
+            to <span class="gradient-text">Building RAG.</span>
+        </h2>
+
+        <p>
+            This project demonstrates how Python, embedding models,
+            vector databases and LLMs work together to transform
+            organisational documents into an intelligent knowledge assistant.
+            It provides a practical foundation for advanced RAG engineering
+            and Agentic AI applications.
+        </p>
+
+        <br>
+
+        <a class="btn btn-primary" href="#pipeline">
+            Revisit the RAG Architecture ↑
+        </a>
+
+    </div>
+</div>
+</section>
+
+<footer>
+<div class="container">
+    <strong>HR POLICY INTELLIGENCE ASSISTANT</strong>
+    <p>AI Engineering · Retrieval-Augmented Generation · Working MVP</p>
+    <p style="margin-top:8px">
+        Educational demonstration | ABC Technologies is fictional
+    </p>
+</div>
+</footer>
+
+<script>
+
+// MOBILE MENU
+
+function toggleMenu() {
+    document.getElementById("navLinks").classList.toggle("show");
+}
+
+document.querySelectorAll(".nav-links a").forEach(link => {
+    link.addEventListener("click", () => {
+        document.getElementById("navLinks").classList.remove("show");
+    });
+});
+
+// INTERACTIVE PIPELINE
+
+const stages = [
+{
+    icon:"📄",
+    title:"01. Document Ingestion",
+    desc:"The application reads HR policy files from the documents folder. Each file is loaded and its text content is extracted.",
+    code:"documents/leave_policy.txt\n documents/work_policy.txt"
+},
+{
+    icon:"🧩",
+    title:"02. Text Chunking",
+    desc:"Large documents are divided into smaller segments. The integrated application uses 700-character chunks with 100-character overlap.",
+    code:"CHUNK_SIZE = 700\nCHUNK_OVERLAP = 100"
+},
+{
+    icon:"🧠",
+    title:"03. Embedding Generation",
+    desc:"The Sentence Transformer model converts every chunk into a numerical vector with 384 dimensions. Similar meanings are represented by nearby vectors in the embedding space.",
+    code:'SentenceTransformer("all-MiniLM-L6-v2")\nembedding_dimension = 384'
+},
+{
+    icon:"🗄️",
+    title:"04. Vector Database",
+    desc:"ChromaDB persistently stores vectors alongside the original text and source metadata. This allows the application to search the knowledge base later.",
+    code:'PersistentClient(path="./hr_vector_db")\ncollection = "hr_policy_assistant"'
+},
+{
+    icon:"🔎",
+    title:"05. Semantic Retrieval",
+    desc:"The employee's question is also converted into an embedding. ChromaDB compares it with stored vectors and returns the most relevant policy chunks.",
+    code:"query_embeddings = question_vector\nn_results = 3"
+},
+{
+    icon:"✨",
+    title:"06. LLM Generation",
+    desc:"Retrieved policy chunks become the context for the LLM. The model generates an understandable response and is instructed not to invent missing policy information.",
+    code:'model = "openai/gpt-oss-20b"\ntemperature = 0.1'
+}
+];
+
+const list = document.getElementById("pipelineList");
+const detail = document.getElementById("pipelineDetail");
+
+function selectStage(index) {
+    const stage = stages[index];
+
+    document.querySelectorAll(".pipeline-btn").forEach((btn,i) => {
+        btn.classList.toggle("active", i === index);
+    });
+
+    detail.innerHTML = `
+        <div class="big-icon">${stage.icon}</div>
+        <h3>${stage.title}</h3>
+        <p>${stage.desc}</p>
+        <div class="code-example">${stage.code.replace(/\n/g,"<br>")}</div>
+    `;
+}
+
+stages.forEach((stage,index) => {
+    const button = document.createElement("button");
+    button.className = "pipeline-btn" + (index === 0 ? " active" : "");
+    button.innerHTML = `
+        <strong>${stage.icon} &nbsp; ${stage.title}</strong>
+        <span>Explore this processing stage →</span>
+    `;
+    button.onclick = () => selectStage(index);
+    list.appendChild(button);
+});
+
+selectStage(0);
+
+// SAMPLE HR SCENARIOS
+
+const demos = [
+{
+    question:"How many days of annual leave am I entitled to?",
+    answer:"Eligible full-time employees are entitled to 30 calendar days of annual leave per year.",
+    source:"leave_policy.txt · Annual Leave",
+    status:"POLICY INFORMATION FOUND"
+},
+{
+    question:"Can I work from home?",
+    answer:"Employees may request work-from-home arrangements with prior approval from their reporting manager.",
+    source:"work_policy.txt · Work From Home",
+    status:"POLICY INFORMATION FOUND"
+},
+{
+    question:"What should I do when taking sick leave?",
+    answer:"Employees must inform their reporting manager. A medical certificate may be required according to company policy.",
+    source:"leave_policy.txt · Sick Leave",
+    status:"POLICY INFORMATION FOUND"
+},
+{
+    question:"What is the company's maternity leave policy?",
+    answer:"I'm sorry, but the policy information regarding maternity leave is not available in the provided policy context.",
+    source:"No supporting maternity leave policy identified",
+    status:"INFORMATION UNAVAILABLE"
+}
+];
+
+function showDemo(index,button) {
+    document.querySelectorAll(".demo-tab").forEach(btn => {
+        btn.classList.remove("active");
+    });
+
+    button.classList.add("active");
+
+    const demo = demos[index];
+
+    document.getElementById("demoContent").innerHTML = `
+        <div style="color:var(--muted);font-size:12px">
+            EMPLOYEE QUESTION
+        </div>
+
+        <div class="chat-question">
+            ${demo.question}
+        </div>
+
+        <div style="color:var(--muted);font-size:12px">
+            AI POLICY ASSISTANT
+        </div>
+
+        <div class="chat-answer">
+            ${demo.answer}
+            <div class="chat-source">
+                📄 ${demo.source}
+            </div>
+        </div>
+
+        <div style="color:${index===3 ? '#f2bc72' : '#54e0b0'};font-size:11px;font-weight:800">
+            ● ${demo.status}
+        </div>
+    `;
+}
+
+showDemo(0,document.querySelector(".demo-tab"));
+
+</script>
+
+</body>
+</html>
